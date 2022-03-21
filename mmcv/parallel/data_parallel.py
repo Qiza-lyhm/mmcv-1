@@ -1,6 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from itertools import chain
 
+import torch
 from torch.nn.parallel import DataParallel
 
 from .scatter_gather import scatter_kwargs
@@ -34,6 +35,11 @@ class MMDataParallel(DataParallel):
     def __init__(self, *args, dim=0, **kwargs):
         super(MMDataParallel, self).__init__(*args, dim=dim, **kwargs)
         self.dim = dim
+        if hasattr(torch, 'is_mlu_available') and torch.is_mlu_available():
+            # DataParallel with MLU is not supported, use device 0 as default
+
+            self.device_ids = [0]
+            self.src_device_obj = torch.device('mlu:0')
 
     def forward(self, *inputs, **kwargs):
         """Override the original forward function.
