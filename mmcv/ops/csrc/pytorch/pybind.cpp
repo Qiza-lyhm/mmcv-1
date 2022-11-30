@@ -5,6 +5,7 @@
 
 std::string get_compiler_version();
 std::string get_compiling_cuda_version();
+void mlu_abs_forward(const Tensor& input, Tensor& output);
 
 void assign_score_withk_forward(const Tensor &points, const Tensor &centers,
                                 const Tensor &scores, const Tensor &knn_idx,
@@ -447,6 +448,7 @@ Tensor nms_quadri(const Tensor dets, const Tensor scores, const Tensor order,
                   const int multi_label);
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+  m.def("mlu_abs_forward", &mlu_abs_forward, "mlu_abs_forward", py::arg("input"), py::arg("output"));
   m.def("upfirdn2d", &upfirdn2d, "upfirdn2d (CUDA)", py::arg("input"),
         py::arg("kernel"), py::arg("up_x"), py::arg("up_y"), py::arg("down_x"),
         py::arg("down_y"), py::arg("pad_x0"), py::arg("pad_x1"),
